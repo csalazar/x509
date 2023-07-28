@@ -2,7 +2,7 @@ defmodule X509.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/voltone/x509"
-  @version "0.8.6"
+  @version "0.8.7"
 
   def project do
     [
@@ -21,13 +21,21 @@ defmodule X509.MixProject do
 
   def application do
     [
-      extra_applications: [:crypto, :public_key, :logger, :ssl]
+      extra_applications: extra_applications(Mix.env())
     ]
+  end
+
+  defp extra_applications(:test) do
+    extra_applications(:prod) ++ [:inets]
+  end
+
+  defp extra_applications(_env) do
+    [:crypto, :public_key, :logger, :ssl]
   end
 
   defp deps do
     [
-      {:ex_doc, "~> 0.22", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
@@ -50,9 +58,10 @@ defmodule X509.MixProject do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md", "CHANGELOG.md"],
+      extras: ["CHANGELOG.md", "README.md"],
       source_ref: "v#{@version}",
-      source_url: @source_url
+      source_url: @source_url,
+      formatters: ["html"]
     ]
   end
 end
